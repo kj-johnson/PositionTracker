@@ -23,16 +23,9 @@ camera = IRCamera(i2c_bus, ir_camera_port)
 # We factor in a 10% overlap in the hopes of making absolutely sure we can't travel too far
 
 
-
-#
-
-
 # Testing
 while True:
-    sleep(0.01) # needs to wait before trying to read again
+    sleep(0.01)  # needs to wait before trying to read again
     positions = camera.get_positions()
     if len(positions) > 0:
         print(positions)
-
-
-
