@@ -28,10 +28,9 @@ class IRCamera:
 
     def __initialize_sensor(self):
         """Send the commands to the IR camera to ready it for use."""
-        init_commands = {
-            [0x30, 0x01, 0x30, 0x08, 0x06,
-             0x90, 0x08, 0xC0, 0x1A, 0x40, 0x33, 0x33]
-        }
+        init_commands = (
+            [0x30, 0x01, 0x30, 0x08, 0x06, 0x90, 0x08, 0xC0, 0x1A, 0x40, 0x33, 0x33]
+        )
         for i, j in zip(init_commands[0::2], init_commands[1::2]):
             self.pi.i2c_write_byte_data(self.device, i, j)
             sleep(0.01)
