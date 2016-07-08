@@ -36,6 +36,12 @@ while True:
     for i in range(1000000):
         x = 1
 
+    pi.write(motor1_1, 1)
+    pi.write(motor1_2, 0)
+
+    pi.write(motor2_1, 1)
+    pi.write(motor2_2, 0)
+
     pi.write(motor1_enable, 1)
     pi.write(motor2_enable, 1)
 
@@ -45,5 +51,21 @@ while True:
     pi.write(motor1_enable, 0)
     pi.write(motor2_enable, 0)
 
+    for i in range(1000000):
+        x = 1
 
+    pi.write(motor1_1, 0)
+    pi.write(motor1_2, 1)
+
+    pi.write(motor2_1, 0)
+    pi.write(motor2_2, 1)
+
+    pi.write(motor1_enable, 1)
+    pi.write(motor2_enable, 1)
+
+    for i in range(1000000):
+        x = 1
+
+    pi.write(motor1_enable, 0)
+    pi.write(motor2_enable, 0)
 
