@@ -5,6 +5,7 @@ Position tracking for my automated forklift project
 ## Hardware
 - [Raspberry Pi](http://www.raspberrypi.org)
 - [IR Tracking Camera](http://www.robotshop.com/en/ir-tracking-camera.html)
+- [L293D Motor Driver](https://www.adafruit.com/product/807)
 
 ## Software
 - [pigpio daemon](http://abyz.co.uk/rpi/pigpio/) (This allows us to access I2C without running our Python script as root)
