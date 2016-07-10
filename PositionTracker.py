@@ -19,7 +19,7 @@ ir_emitter_pattern_width = 3.0  # inches
 ir_emitter_pattern_height = 3.44  # inches
 ceiling_height = 96  # inches
 has_magnetometer = False  # enables error correction using magnetometer
-
+tilt_offset_y = 8.5  # how many inches is the tilt off by?
 
 # make your camera object
 camera = IRCamera(i2c_bus, ir_camera_port)
@@ -42,6 +42,7 @@ def rotate_around_origin(x, y, theta):
     # x'= x*cos(theta) - y*sin(theta)
     # and
     # y'= x*sin(theta) + y*cos(theta)
+    # theta *= -1.0
     position = [0, 0]
     position[0] = x * cos(radians(theta)) - y * sin(radians(theta))
     position[1] = x * sin(radians(theta)) + y * cos(radians(theta))
@@ -105,29 +106,33 @@ while not found:
         if vector_direction < 0.0:
             vector_direction += 360.0
 
-        # print("point 1:", point_1, "\n", "point 2:", point_2, "\n", "point 3:", point_3, "\n")
+        vector_direction_degrees = -1 * vector_direction + 90  # convert from bearing into math-appropriate degrees
+        while vector_direction_degrees < 0.0:
+            vector_direction_degrees += 360.0  # force it into a range from 0 to 360
 
-        # print("Position:", top_point, "\n", "Heading (degrees):", vector_direction, "\n")
-
-        # grab the distance from the center (0, 0)
-        pixels_from_center = math.hypot(top_point[0], top_point[1])
         vehicle_position = [top_point[0], -1 * top_point[1]]
+        print("Untouched vehicle position:", vehicle_position)
 
+        # the scaling factor is determined using the specified triangle height -- it allows you to move up and down
+        # and still have accurate positioning in real-world units (inches in this case)
         scaling_factor = ir_emitter_pattern_height / math.sqrt(pow(top_point[0] - midpoint[0], 2) + pow(top_point[1] - midpoint[1], 2))
-        # scaling_factor *= 0.68  # needs to be dynamic
-        distance_from_center = pixels_from_center * scaling_factor
-        distance_from_center = distance_from_center * 1.287257143 - 0.346476191
-        position_in_inches = [vehicle_position[0] * scaling_factor, vehicle_position[1] * scaling_factor]
-        position_in_inches = [position_in_inches[0] * 1.287257143 - 0.346476191, position_in_inches[1] * 1.287257143 - 0.346476191]
 
+        position_in_inches = [vehicle_position[0] * scaling_factor, vehicle_position[1] * scaling_factor]  # adjust from pixels to actual measurements
+        #position_in_inches = [position_in_inches[0] * 1.287257143 - 0.346476191, position_in_inches[1] * 1.287257143 - 0.346476191]  # adjust for scaling imperfections
         print("Camera-read Position:", vehicle_position)
         print("Camera-read Position (inches):", position_in_inches)
-        print("Distance from center (inches):", distance_from_center)
-        print("Vehicle heading:", vector_direction)
 
-        # the distance from the center is accurate, we just need to find the actual position somehow
+        position_in_inches = [position_in_inches[0], position_in_inches[1] + tilt_offset_y]  # adjust for tilt
+        print("Tilt-adjusted Position (inches):", position_in_inches)
+        inches_from_center = math.hypot(position_in_inches[0], position_in_inches[1])  # distance from point to the origin
 
-        absolute_position = rotate_around_origin(position_in_inches[0], position_in_inches[1], vector_direction)
+
+        print("Distance from center (inches):", inches_from_center)
+        print("Vehicle bearing:", vector_direction)
+        print("Vehicle degrees:", vector_direction_degrees)
+
+        # use the bearing in this case -- the negative is to change which direction you rotate it
+        absolute_position = rotate_around_origin(position_in_inches[0], position_in_inches[1], -1.0 * vector_direction)
 
         print("Corrected position:", absolute_position)
 
