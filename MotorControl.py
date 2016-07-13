@@ -11,7 +11,6 @@ class MotorControl:
     motor2_1 = 24
     motor2_2 = 23
 
-
     # create the gpio object
     pi = pigpio.pi()
 
@@ -50,34 +49,20 @@ class MotorControl:
         self.pi.write(self.motor1_enable, 1)
         self.pi.write(self.motor2_enable, 1)
 
-    def turn_clockwise(self):
-        # disable motors while you adjust settings
-        self.stop()
-
+    def turn_counter_clockwise(self):
         # change directions
         self.motor_1_forward(True)
         self.motor_2_forward(False)  # reversed
 
-        # enable motors
-        self.start_motors()
-
-    def turn_counter_clockwise(self):
-        # disable motors while you adjust settings
-        self.stop()
-
+    def turn_clockwise(self):
         # change directions
         self.motor_1_forward(False)  # reversed
         self.motor_2_forward(True)
 
-        # enable motors
-        self.start_motors()
-
     def move_forward(self):
         self.motor_1_forward(True)
         self.motor_2_forward(True)
-        self.start_motors()
 
     def move_backward(self):
         self.motor_1_forward(False)
         self.motor_2_forward(False)
-        self.start_motors()
