@@ -1,71 +1,83 @@
 import pigpio
 
-# pin definitions
-motor1_enable = 4
-motor1_1 = 22
-motor1_2 = 27
 
-motor2_enable = 25
-motor2_1 = 24
-motor2_2 = 23
+class MotorControl:
+    # pin definitions
+    motor1_enable = 4
+    motor1_1 = 22
+    motor1_2 = 27
+
+    motor2_enable = 25
+    motor2_1 = 24
+    motor2_2 = 23
 
 
-# create the gpio object
-pi = pigpio.pi()
+    # create the gpio object
+    pi = pigpio.pi()
 
-# set the motors pins as outputs
-pi.set_mode(motor1_enable, pigpio.OUTPUT)
-pi.set_mode(motor1_1, pigpio.OUTPUT)
-pi.set_mode(motor1_2, pigpio.OUTPUT)
+    def __init__(self):
+        # set the motors pins as outputs
+        self.pi.set_mode(self.motor1_enable, pigpio.OUTPUT)
+        self.pi.set_mode(self.motor1_1, pigpio.OUTPUT)
+        self.pi.set_mode(self.motor1_2, pigpio.OUTPUT)
 
-pi.set_mode(motor2_enable, pigpio.OUTPUT)
-pi.set_mode(motor2_1, pigpio.OUTPUT)
-pi.set_mode(motor2_2, pigpio.OUTPUT)
+        self.pi.set_mode(self.motor2_enable, pigpio.OUTPUT)
+        self.pi.set_mode(self.motor2_1, pigpio.OUTPUT)
+        self.pi.set_mode(self.motor2_2, pigpio.OUTPUT)
 
-# initial testing... drive forward on both motors
-pi.write(motor1_1, 1)
-pi.write(motor1_2, 0)
+    def stop(self):
+        # disable motors
+        self.pi.write(self.motor1_enable, 0)
+        self.pi.write(self.motor2_enable, 0)
 
-pi.write(motor2_1, 1)
-pi.write(motor2_2, 0)
+    def motor_1_forward(self, forward=True):
+        if forward:
+            self.pi.write(self.motor1_1, 1)
+            self.pi.write(self.motor1_2, 0)
+        else:
+            self.pi.write(self.motor1_1, 0)
+            self.pi.write(self.motor1_2, 1)
 
-pi.write(motor1_enable, 1)
-pi.write(motor2_enable, 1)
+    def motor_2_forward(self, forward=True):
+        if forward:
+            self.pi.write(self.motor2_1, 1)
+            self.pi.write(self.motor2_2, 0)
+        else:
+            self.pi.write(self.motor2_1, 0)
+            self.pi.write(self.motor2_2, 1)
 
-while True:
-    for i in range(1000000):
-        x = 1
+    def start_motors(self):
+        self.pi.write(self.motor1_enable, 1)
+        self.pi.write(self.motor2_enable, 1)
 
-    pi.write(motor1_1, 1)
-    pi.write(motor1_2, 0)
+    def turn_clockwise(self):
+        # disable motors while you adjust settings
+        self.stop()
 
-    pi.write(motor2_1, 1)
-    pi.write(motor2_2, 0)
+        # change directions
+        self.motor_1_forward(True)
+        self.motor_2_forward(False)  # reversed
 
-    pi.write(motor1_enable, 1)
-    pi.write(motor2_enable, 1)
+        # enable motors
+        self.start_motors()
 
-    for i in range(1000000):
-        x = 1
+    def turn_counter_clockwise(self):
+        # disable motors while you adjust settings
+        self.stop()
 
-    pi.write(motor1_enable, 0)
-    pi.write(motor2_enable, 0)
+        # change directions
+        self.motor_1_forward(False)  # reversed
+        self.motor_2_forward(True)
 
-    for i in range(1000000):
-        x = 1
+        # enable motors
+        self.start_motors()
 
-    pi.write(motor1_1, 0)
-    pi.write(motor1_2, 1)
+    def move_forward(self):
+        self.motor_1_forward(True)
+        self.motor_2_forward(True)
+        self.start_motors()
 
-    pi.write(motor2_1, 0)
-    pi.write(motor2_2, 1)
-
-    pi.write(motor1_enable, 1)
-    pi.write(motor2_enable, 1)
-
-    for i in range(1000000):
-        x = 1
-
-    pi.write(motor1_enable, 0)
-    pi.write(motor2_enable, 0)
-
+    def move_backward(self):
+        self.motor_1_forward(False)
+        self.motor_2_forward(False)
+        self.start_motors()
