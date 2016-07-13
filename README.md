@@ -24,8 +24,9 @@ Position tracking for my automated forklift project
 - Connect the IR Camera to the I2C1 ports on the Raspberry Pi. Note that the Vcc should be connected to 3.3V and **NOT** 5V, as the IR Tracking Camera is a 3.3V device
 - Set up the pigpiodaemon (pigpiod) to run on boot, as it is required for the script to access the GPIO
 - Modify the settings in PositionTracker.py for your setup for the correct ports and measurements
+- Modify the tolerance and run options in run.py to set tolerances and such
 
 ---
 
 # Running the script
-- run ```python3 PositionTracker.py```
+- run ```python3 run.py```
